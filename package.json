@@ -1,6 +1,6 @@
 {
   "name": "wui-directive",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A custom directive for Vue.js",
   "main": "src/index.js",
   "keywords": [
