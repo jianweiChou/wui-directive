@@ -1,21 +1,33 @@
-name: npm-publish
+name: Release
+
 on:
   push:
     branches:
       - main
+
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: '14.x'
-      - name: Install dependencies
+          node-version: '14'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Cache Dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install Dependencies
         run: npm install
-      - name: Publish to npm
-        run: npm publish
+      - name: Run Tests
+        run: npm test
+      - name: Release
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
